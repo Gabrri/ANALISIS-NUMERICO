@@ -18,6 +18,7 @@ L = 1
 a= -1
 b= 1
 p_i = 3.1416
+x= 4 #Sabemos que x es cte asi que tomemos x = 4
 
 #Calculando los pasos de diferente tamaño
 # dz =[0,5, 0,1, 0,05, 0,01]
@@ -27,33 +28,28 @@ N_3= int((b-a)/0.05)
 N_4= int((b-a)/0.01)
 
 #Biot-Savart
+#
 
-def f1(x):
-    B_S = (m_u*I)/(4*p_i)*(math.sin(p_i)/x**2)
+def f1(z):
+    B_S = (m_u*I)/(4*p_i)*(x/(z**2+x**2)**3/2)
     return B_S
 
-x_1= np.linspace(a,b,num=N_1)
-x_2= np.linspace(a,b,num=N_2)
-x_3= np.linspace(a,b,num=N_3)
-x_4= np.linspace(a,b,num=N_4)
+z_1= np.linspace(a,b,num=N_1)
+z_2= np.linspace(a,b,num=N_2)
+z_3= np.linspace(a,b,num=N_3)
+z_4= np.linspace(a,b,num=N_4)
 
-y_1= f1(x_1)
-y_2= f1(x_2)
-y_3= f1(x_3)
-y_4= f1(x_4)
+y_1= f1(z_1)
+y_2= f1(z_2)
+y_3= f1(z_3)
+y_4= f1(z_4)
 
-#Integra = quad(f1, -1,-0.1)
-#Integra2= quad(f1, 0.1,1)
+#Trapezoide
 
-#print(Integra)
-#print(Integra2)
-
-#Trapezoide y simpson
-
-Tr_1 = integrate.trapz(y_1, x_1)
-Tr_2 = integrate.trapz(y_2, x_2)
-Tr_3 = integrate.trapz(y_3, x_3)
-Tr_4 = integrate.trapz(y_4, x_4)
+Tr_1 = integrate.trapz(y_1, z_1)
+Tr_2 = integrate.trapz(y_2, z_2)
+Tr_3 = integrate.trapz(y_3, z_3)
+Tr_4 = integrate.trapz(y_4, z_4)
 
 print("Aproximaciones (Trapezoide) con diferentes Deltas de z: ")
 print(Tr_1)
@@ -73,7 +69,7 @@ plt.scatter(dz, Puntos_A_Trapz)
 plt.plot(dz,Puntos_A_Trapz, marker="o", color="red")
 plt.xlabel("dz", fontsize = 10)
 plt.ylabel("Trapezoidal Rule Points", fontsize = 10)
-plt.title("Grafica comparando metdos Biot-Savart, Trapezoidal y Trapezoidal Composite", fontsize = 15)
+plt.title("Grafica comparando metodos Trapezoidal y Trapezoidal Composite", fontsize = 10)
 plt.legend(['Trapezoidal'])
 plt.savefig("Grafica_A.PNG")
 plt.grid()
@@ -81,10 +77,10 @@ plt.grid()
 ########################## PUNTO B ####################################################
 
 #Usando Simpson
-Si_1 = integrate.simpson(y_1, x_1)
-Si_2 = integrate.simpson(y_2, x_2)
-Si_3 = integrate.simpson(y_3, x_3)
-Si_4 = integrate.simpson(y_4, x_4)
+Si_1 = integrate.simpson(y_1, z_1)
+Si_2 = integrate.simpson(y_2, z_2)
+Si_3 = integrate.simpson(y_3, z_3)
+Si_4 = integrate.simpson(y_4, z_4)
 
 print("Aproximaciones (Simpson) con diferentes Deltas de z: ")
 print(Si_1)
@@ -104,9 +100,10 @@ plt.scatter(dz, Puntos_A_Simp)
 plt.plot(dz,Puntos_A_Simp, marker="o", color="blue")
 plt.xlabel("dz", fontsize = 10)
 plt.ylabel("Simpson Rule Points", fontsize = 10)
-plt.title("Grafica comparando metdos Biot-Savart, Simpson y Simpson Composite", fontsize = 15)
+plt.title("Grafica comparando metodos Simpson y Simpson Composite", fontsize = 10)
 plt.legend(['Simpson'])
 plt.savefig("Grafica_B.PNG")
 plt.grid()
 
 plt.show()
+
