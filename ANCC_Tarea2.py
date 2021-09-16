@@ -4,7 +4,6 @@ import scipy
 import math
 from matplotlib import pyplot as plt
 from scipy import integrate
-from scipy.integrate import quad
 
 #Juan Camilo Rodriguez y Gabriela Cortes Mejia
 
@@ -15,95 +14,135 @@ from scipy.integrate import quad
 m_u = 1
 I = 1
 L = 1
-a= -1
+a= 0.01 #deberia ser -1
 b= 1
 p_i = 3.1416
-x= 4 #Sabemos que x es cte asi que tomemos x = 4
 
-#Calculando los pasos de diferente tamaño
-# dz =[0,5, 0,1, 0,05, 0,01]
+#Biot-Savart
+
+def BS(z,x):
+    B_S = (m_u*I)/(4*p_i)*(x/(z**2+x**2)**3/2)
+    return B_S
+
+#TRAPEZOIDE STANTARD
+x_stan = np.linspace(a,b)
+
+#TRAPEZOIDE COMPUESTO
 N_1= int((b-a)/0.5)
 N_2= int((b-a)/0.1)
 N_3= int((b-a)/0.05)
 N_4= int((b-a)/0.01)
 
-#Biot-Savart
-#
+x_1= np.linspace(a,b,num=N_1)
+x_2= np.linspace(a,b,num=N_2)
+x_3= np.linspace(a,b,num=N_3)
+x_4= np.linspace(a,b,num=N_4)
 
-def f1(z):
-    B_S = (m_u*I)/(4*p_i)*(x/(z**2+x**2)**3/2)
-    return B_S
+def comp_trapz(x):
+    Y=[]
+    a=0
+    for i in range (0,len(x)-1,1):
+        points = np.arange(start=x[i], stop=x[i+1], step=(x[i+1]-x[i])/3)
+        y=[]
+        for j in points:
+            y.append(BS(0,j))
+        a = integrate.trapz(y,points)
+        Y.append(a)
+    Y.append(a)
+    return(Y)
 
-z_1= np.linspace(a,b,num=N_1)
-z_2= np.linspace(a,b,num=N_2)
-z_3= np.linspace(a,b,num=N_3)
-z_4= np.linspace(a,b,num=N_4)
+TT_1 = comp_trapz(x_1)
+TT_2= comp_trapz(x_2)
+TT_3= comp_trapz(x_3)
+TT_4= comp_trapz(x_4)
+TT_stan=comp_trapz(x_stan)
 
-y_1= f1(z_1)
-y_2= f1(z_2)
-y_3= f1(z_3)
-y_4= f1(z_4)
-
-#Trapezoide
-
-Tr_1 = integrate.trapz(y_1, z_1)
-Tr_2 = integrate.trapz(y_2, z_2)
-Tr_3 = integrate.trapz(y_3, z_3)
-Tr_4 = integrate.trapz(y_4, z_4)
-
-print("Aproximaciones (Trapezoide) con diferentes Deltas de z: ")
-print(Tr_1)
-print(Tr_2)
-print(Tr_3)
-print(Tr_4)
-
-p=[1,2,3,4]
-dz =[0.5, 0.1, 0.05, 0.01]
 
 #GRAFICA
-#trapexoide
-Puntos_A_Trapz =[Tr_1, Tr_2, Tr_3, Tr_4]
 
 plt.figure(1)
-plt.scatter(dz, Puntos_A_Trapz)
-plt.plot(dz,Puntos_A_Trapz, marker="o", color="red")
-plt.xlabel("dz", fontsize = 10)
-plt.ylabel("Trapezoidal Rule Points", fontsize = 10)
-plt.title("Grafica comparando metodos Trapezoidal y Trapezoidal Composite", fontsize = 10)
-plt.legend(['Trapezoidal'])
+plt.plot(x_1,TT_1, marker=".", color="red")
+plt.plot(x_2,TT_2, marker=".", color="blue")
+plt.plot(x_3,TT_3, marker=".", color="green")
+plt.plot(x_4,TT_4, marker=".", color="purple")
+plt.plot(x_stan,TT_stan, marker=".", color="yellow")
+plt.xlabel("", fontsize = 10)
+plt.ylabel("", fontsize = 10)
+plt.title("Grafica metodos Trapezoide y Trapezoide Compuesto", fontsize = 10)
+plt.legend(['dz=0.5','dz=0.1','dz=0.05','dz=0.01', 'Standart'])
 plt.savefig("Grafica_A.PNG")
 plt.grid()
+plt.show()
 
 ########################## PUNTO B ####################################################
 
-#Usando Simpson
-Si_1 = integrate.simpson(y_1, z_1)
-Si_2 = integrate.simpson(y_2, z_2)
-Si_3 = integrate.simpson(y_3, z_3)
-Si_4 = integrate.simpson(y_4, z_4)
-
-print("Aproximaciones (Simpson) con diferentes Deltas de z: ")
-print(Si_1)
-print(Si_2)
-print(Si_3)
-print(Si_4)
+def comp_simps(x):
+    Y=[]
+    a=0
+    for i in range (0,len(x)-1,1):
+        points = np.arange(start=x[i], stop=x[i+1], step=(x[i+1]-x[i])/3)
+        y=[]
+        for j in points:
+            y.append(BS(0,j))
+        a = integrate.simpson(y,points)
+        Y.append(a)
+    Y.append(a)
+    return(Y)
+SS_1 = comp_simps(x_1)
+SS_2= comp_simps(x_2)
+SS_3= comp_simps(x_3)
+SS_4= comp_simps(x_4)
+SS_stan=comp_simps(x_stan)
 
 
 #GRAFICA
-#trapexoide
-Puntos_A_Simp =[Si_1, Si_2, Si_3, Si_4]
-p=[1,2,3,4]
-dz =[0.5, 0.1, 0.05, 0.01]
 
 plt.figure(2)
-plt.scatter(dz, Puntos_A_Simp)
-plt.plot(dz,Puntos_A_Simp, marker="o", color="blue")
-plt.xlabel("dz", fontsize = 10)
-plt.ylabel("Simpson Rule Points", fontsize = 10)
-plt.title("Grafica comparando metodos Simpson y Simpson Composite", fontsize = 10)
-plt.legend(['Simpson'])
+plt.plot(x_1,SS_1, marker=".", color="red")
+plt.plot(x_2,SS_2, marker=".", color="blue")
+plt.plot(x_3,SS_3, marker=".", color="green")
+plt.plot(x_4,SS_4, marker=".", color="purple")
+plt.plot(x_stan,SS_stan, marker=".", color="yellow")
+plt.xlabel("", fontsize = 10)
+plt.ylabel("", fontsize = 10)
+plt.title("Grafica metodos Simpson y Simpson Compuesto", fontsize = 10)
+plt.legend(['dz=0.5','dz=0.1','dz=0.05','dz=0.01', 'Standart'])
 plt.savefig("Grafica_B.PNG")
 plt.grid()
-
 plt.show()
 
+
+########################## PUNTO C ####################################################
+
+def comp_simps(x):
+    Y=[]
+    a=0
+    for i in range (0,len(x)-1,1):
+        points = np.arange(start=x[i], stop=x[i+1], step=(x[i+1]-x[i])/3)
+        y=[]
+        for j in points:
+            y.append(BS(1,j))
+        a = integrate.simpson(y,points)
+        Y.append(a)
+    Y.append(a)
+    return(Y)
+
+c = comp_simps(x_4)
+
+a_1=0.1
+b_1=10
+c_1= np.linspace(a_1,b_1,num=N_4)
+
+c_2=comp_simps(c_1)
+
+
+plt.figure(3)
+plt.plot(x_4,c, marker=".", color="red")
+plt.plot(x_4,c_2, marker=".", color="purple")
+plt.xlabel("", fontsize = 10)
+plt.ylabel("", fontsize = 10)
+plt.title("Grafica metodos Simpson con L= 1 y L=10", fontsize = 10)
+plt.legend(['dz=0.01 L=1','dz=0.01 L=10'])
+plt.savefig("Grafica_C.PNG")
+plt.grid()
+plt.show()
